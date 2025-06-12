@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import { connect } from './data/index.js';
@@ -41,15 +41,59 @@ connect(MONGO_URL)
         next(error);
       }
     });
+    // server.delete('/users/:userId', (request, response, next) => {
+    //   try {
+    //     const authorization = request.headers.authorization;
+    //     const token = authorization.slice(7);
+    //     const { sub: tokenUserId } = jwt.verify(token, JWT_SECRET);
+    //     const { userId: userId } = request.params;
+    //     logic
+    //       .removeUser(userId)
+    //       .then(() => response.status(204).send())
+    //       .catch((error) => next(error));
+    //   } catch (error) {
+    //     next(error);
+    //   }
+    // });
     server.delete('/users/:userId', (request, response, next) => {
       try {
-        const authorization = request.headers.authorization;
+        const { authorization } = request.headers;
+        if (!authorization || !authorization.startsWith('Bearer ')) {
+          const error = new Error('Invalid authorization header');
+          error.status = 401;
+          throw error;
+        }
         const token = authorization.slice(7);
         const { sub: tokenUserId } = jwt.verify(token, JWT_SECRET);
-        const { userId: userId } = request.params;
+        const { userId } = request.params;
+        if (tokenUserId !== userId) {
+          const error = new Error('you are not authorized to delete this user');
+          error.status = 403;
+          throw error;
+        }
         logic
           .removeUser(userId)
           .then(() => response.status(204).send())
+          .catch((error) => next(error));
+      } catch (error) {
+        next(error);
+      }
+    });
+    server.get('/users', (request, response, next) => {
+      try {
+        const { authorization } = request.headers;
+        if (!authorization || !authorization.startsWith('Bearer ')) {
+          const error = new Error('Encabezado de autorización inválido');
+          error.status = 401; // Unauthorized
+          throw error;
+        }
+
+        const token = authorization.slice(7);
+        const { sub: userId } = jwt.verify(token, process.env.JWT_SECRET);
+
+        logic
+          .getUsers(userId)
+          .then((user) => response.status(200).json(user))
           .catch((error) => next(error));
       } catch (error) {
         next(error);
