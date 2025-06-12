@@ -41,6 +41,21 @@ connect(MONGO_URL)
         next(error);
       }
     });
+    server.delete('/users/:userId', (request, response, next) => {
+      try {
+        const authorization = request.headers.authorization;
+        const token = authorization.slice(7);
+        const { sub: tokenUserId } = jwt.verify(token, JWT_SECRET);
+        const { userId: userId } = request.params;
+        logic
+          .removeUser(userId)
+          .then(() => response.status(204).send())
+          .catch((error) => next(error));
+      } catch (error) {
+        next(error);
+      }
+    });
+
     server.use((error, request, response) => {
       if (error instanceof ValidationError)
         response.status(400).json({ error: error.constructor.name, message: error.message });
