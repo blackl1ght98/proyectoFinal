@@ -28,19 +28,20 @@ const user = new Schema({
     required: true,
   },
   rol: {
-    type: ObjectId,
-    ref: 'Rol',
-    required: true,
-  },
-});
-const rol = new Schema({
-  nombre: {
     type: String,
-    required: true,
-    unique: true,
     enum: ['administrador', 'empleado', 'cliente'],
+    required: true,
+    default: 'cliente',
   },
 });
+// const rol = new Schema({
+//   nombre: {
+//     type: String,
+//     required: true,
+//     unique: true,
+//     enum: ['administrador', 'empleado', 'cliente'],
+//   },
+// });
 const User = model('User', user);
-const Rol = model('Rol', rol);
-export { User, Rol };
+//const Rol = model('Rol', rol);
+export { User };

@@ -4,7 +4,7 @@ import { NotFoundError, SystemError } from '../errors.js';
 export const getUsers = () => {
   return User.find()
     .lean()
-    .populate('rol', 'nombre')
+
     .catch((error) => {
       throw new SystemError('Error en MongoDB');
     })
@@ -17,9 +17,6 @@ export const getUsers = () => {
         user.id = user._id.toString();
         delete user._id;
         delete user.__v;
-        if (user.rol) {
-          user.rol = user.rol.nombre;
-        }
       });
 
       return users;

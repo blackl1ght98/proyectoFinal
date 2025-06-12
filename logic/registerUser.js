@@ -1,4 +1,4 @@
-import { Rol, User } from '../data/index.js';
+import { User } from '../data/index.js';
 import bcrypt from 'bcryptjs';
 import { DuplicityError, SystemError, ValidationError } from '../errors.js';
 
@@ -19,34 +19,29 @@ export const registerUser = (nombreCompleto, email, password, direccion, rol) =>
   if (typeof direccion !== 'string' || !direccion.trim()) {
     throw new ValidationError('dirección inválida o vacía');
   }
-
+  const roles = ['administrador', 'cliente', 'empleado'];
+  if (typeof rol !== 'string' || !roles.includes(rol)) throw new ValidationError('rol invalido');
   const saltRounds = 10;
 
-  return Rol.findOne({ nombre: rol })
-    .then((rolDoc) => {
-      if (rolDoc) return rolDoc;
-      return Rol.create({ nombre: rol }).catch((error) => {
-        if (error.code === 11000) {
-          throw new DuplicityError('el rol ya existe');
-        }
-        throw new SystemError('error al crear el rol');
-      });
-    })
-    .then((rolDoc) => {
-      return bcrypt.hash(password, saltRounds).then((hashedPassword) => {
-        return User.create({
-          nombreCompleto,
-          email,
-          password: hashedPassword,
-          direccion,
-          rol: rolDoc._id,
-        });
-      });
-    })
+  return bcrypt
+    .hash(password, saltRounds)
     .catch((error) => {
-      if (error.code === 11000) {
-        throw new DuplicityError('el usuario con este email ya existe');
-      }
       throw new SystemError(error.message || 'error en el registro');
+    })
+    .then((hashedPassword) => {
+      return User.create({
+        nombreCompleto,
+        email,
+        password: hashedPassword,
+        direccion,
+        rol,
+      })
+        .catch((error) => {
+          if (error.code === 11000) {
+            throw new DuplicityError('el usuario con este email ya existe');
+          }
+          throw new SystemError(error.message || 'error en el registro');
+        })
+        .then(() => {});
     });
 };

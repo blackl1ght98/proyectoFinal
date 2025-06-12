@@ -1,4 +1,5 @@
 import { authenticateUser } from './authenticateUser.js';
+import { editUser } from './editUser.js';
 import { getUsers } from './getUsers.js';
 import { registerUser } from './registerUser.js';
 import { removeUser } from './removeUser.js';
@@ -8,4 +9,5 @@ export const logic = {
   authenticateUser,
   removeUser,
   getUsers,
+  editUser,
 };

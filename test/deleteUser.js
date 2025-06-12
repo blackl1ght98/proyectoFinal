@@ -1,8 +1,8 @@
-fetch('http://localhost:8080/users/684a7847561a57eca185ed7d', {
+fetch('http://localhost:8080/users/684a9788fdc1eaf12e1c05a5', {
   method: 'DELETE',
   headers: {
     Authorization:
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODRhNzg0NzU2MWE1N2VjYTE4NWVkN2QiLCJpYXQiOjE3NDk3MTI0OTN9.Upw249Rv42OyZ8Q7OHKuC0zQd8Qi24RAVLjwsAi7J2A',
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ODRiMTQzODlhZTg5ZjVjMWQ1Y2EwMTkiLCJpYXQiOjE3NDk3NTE2MDZ9.HBEux5n29YSCsUTH10SVcvndlBmzgJrcwedddrAp4gM',
   },
 })
   .catch((error) => {

@@ -1,7 +1,7 @@
 import express, { response } from 'express';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
-import { connect } from './data/index.js';
+import { connect, User } from './data/index.js';
 import { AuthorizationError, CredentialsError, DuplicityError, NotFoundError, ValidationError } from './errors.js';
 import { logic } from './logic/index.js';
 const { JsonWebTokenError } = jwt;
@@ -64,15 +64,10 @@ connect(MONGO_URL)
           throw error;
         }
         const token = authorization.slice(7);
-        const { sub: tokenUserId } = jwt.verify(token, JWT_SECRET);
+        const { sub: adminId } = jwt.verify(token, JWT_SECRET);
         const { userId } = request.params;
-        if (tokenUserId !== userId) {
-          const error = new Error('you are not authorized to delete this user');
-          error.status = 403;
-          throw error;
-        }
         logic
-          .removeUser(userId)
+          .removeUser(userId, adminId)
           .then(() => response.status(204).send())
           .catch((error) => next(error));
       } catch (error) {
@@ -99,7 +94,26 @@ connect(MONGO_URL)
         next(error);
       }
     });
+    server.put('/users', jsonBodyParser, (request, response, next) => {
+      try {
+        const { authorization } = request.headers;
+        if (!authorization || !authorization.startsWith('Bearer ')) {
+          const error = new Error('Encabezado de autorizacion invalido');
+          error.status = 401;
+          throw error;
+        }
+        const token = authorization.slice(7);
+        const { sub: userId } = jwt.verify(token, JWT_SECRET);
 
+        const { nombreCompleto, direccion } = request.body;
+        logic
+          .editUser(userId, nombreCompleto, direccion)
+          .then((updatedUser) => response.status(200).json(updatedUser))
+          .catch((error) => next(error));
+      } catch (error) {
+        next(error);
+      }
+    });
     server.use((error, request, response) => {
       if (error instanceof ValidationError)
         response.status(400).json({ error: error.constructor.name, message: error.message });
