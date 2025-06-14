@@ -6,6 +6,13 @@ export const data = {
   getToken() {
     return sessionStorage.token;
   },
+  setRol(rol) {
+    sessionStorage.rol = rol;
+  },
+
+  getRol() {
+    return sessionStorage.rol;
+  },
 
   removeToken() {
     delete sessionStorage.token;

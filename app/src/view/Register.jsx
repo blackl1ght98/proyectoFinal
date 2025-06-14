@@ -1,5 +1,5 @@
 import { logic } from '../logic';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 export const Register = () => {
   const navigate = useNavigate();

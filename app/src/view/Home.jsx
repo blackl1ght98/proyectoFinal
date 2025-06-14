@@ -1,8 +1,7 @@
 export const Home = () => {
   return (
-    <div>
-      <h1 className="text-3xl text-center">¡Bienvenido, usuarios!</h1>
-      <p>Esta es la pagina de inicio</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-white flex items-center justify-center p-4">
+      <h1>ESTA ES LA HOME</h1>
     </div>
   );
 };

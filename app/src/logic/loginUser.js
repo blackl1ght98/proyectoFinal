@@ -5,7 +5,7 @@ export const loginUser = (email, password) => {
     throw new Error('formato de email inválido');
   }
   if (typeof password !== 'string') throw new Error('Credenciales invalidas');
-  if (password.length < 8) throw new Error('logitud de la contraseña insuficiente');
+  if (password.length < 8) throw new Error('longitud de la contraseña insuficiente');
   return fetch(`${import.meta.env.VITE_API_URL}users/auth`, {
     method: 'POST',
     headers: {
@@ -14,17 +14,23 @@ export const loginUser = (email, password) => {
     body: JSON.stringify({ email, password }),
   })
     .catch(() => {
-      throw new Error('conection error');
+      throw new Error('connection error');
     })
     .then((response) => {
       const { status } = response;
-      if (status === 200)
+      if (status === 200) {
         return response
           .json()
           .catch(() => {
             throw new Error('json error');
           })
-          .then((token) => data.setToken(token));
+          .then(({ token, rol }) => {
+            data.setToken(token);
+            // Opcional: almacenar el rol si es necesario
+            data.setRol(rol);
+            return { token, rol };
+          });
+      }
       return response
         .json()
         .catch(() => {
