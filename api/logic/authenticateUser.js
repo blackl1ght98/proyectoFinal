@@ -17,7 +17,8 @@ export const authenticateUser = (email, password) => {
       return bcrypt
         .compare(password, user.password)
         .then(() => {
-          return user.id;
+          console.log('El rol del usuario es ', user.rol);
+          return { id: user.id, rol: user.rol };
         })
         .catch(() => {
           throw new CredentialsError('credentials error');

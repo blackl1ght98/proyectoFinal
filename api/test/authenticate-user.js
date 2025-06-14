@@ -3,7 +3,7 @@ fetch('http://localhost:8080/users/auth', {
   headers: {
     'Content-Type': 'application/json',
   },
-  body: '{"email":"javi@perez.com","password":"12345678"}',
+  body: JSON.stringify({ email: 'javi@perez.com', password: '12345678' }), // Usar JSON.stringify para el body
 })
   .catch((error) => {
     throw new Error('connection error');
@@ -11,13 +11,14 @@ fetch('http://localhost:8080/users/auth', {
   .then((response) => {
     const { status } = response;
 
-    if (status === 200)
+    if (status === 200) {
       return response
         .json()
         .catch((error) => {
           throw new Error('json error');
         })
-        .then((userId) => userId);
+        .then(({ token, rol }) => ({ token, rol })); // Desestructurar token y rol
+    }
 
     return response
       .json()
@@ -26,9 +27,11 @@ fetch('http://localhost:8080/users/auth', {
       })
       .then((body) => {
         const { error, message } = body;
-
         throw new Error(message);
       });
   })
-  .then((userId) => console.log('user authenticated', userId))
-  .catch((error) => console.error(error));
+  .then(({ token, rol }) => {
+    console.log('User authenticated', { token, rol }); // Mostrar token y rol
+    return { token, rol }; // Opcional: devolver token y rol para uso posterior
+  })
+  .catch((error) => console.error('Error:', error.message));

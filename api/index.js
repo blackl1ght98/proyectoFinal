@@ -31,10 +31,10 @@ connect(MONGO_URL)
 
         logic
           .authenticateUser(email, password)
-          .then((userId) => {
-            const token = jwt.sign({ sub: userId }, JWT_SECRET);
-
-            response.status(200).json(token);
+          .then(({ id, rol }) => {
+            // Desestructurar id y rol correctamente
+            const token = jwt.sign({ sub: id, rol }, JWT_SECRET); // Usar id y rol en el token
+            response.status(200).json({ token, rol });
           })
           .catch((error) => next(error));
       } catch (error) {
