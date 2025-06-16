@@ -32,8 +32,7 @@ connect(MONGO_URL)
         logic
           .authenticateUser(email, password)
           .then(({ id, rol }) => {
-            // Desestructurar id y rol correctamente
-            const token = jwt.sign({ sub: id, rol }, JWT_SECRET); // Usar id y rol en el token
+            const token = jwt.sign({ sub: id, rol }, JWT_SECRET);
             response.status(200).json({ token, rol });
           })
           .catch((error) => next(error));
@@ -81,49 +80,32 @@ connect(MONGO_URL)
         next(error);
       }
     });
+
     server.put('/users/:userId', jsonBodyParser, (request, response, next) => {
       try {
         const { authorization } = request.headers;
 
         if (!authorization || !authorization.startsWith('Bearer ')) {
-          const error = new Error('Encabezado de autorizacion invalido');
+          const error = new Error('Encabezado de autorización inválido');
           error.status = 401;
           throw error;
         }
 
         const token = authorization.slice(7);
-        const { userId } = request.params;
-        const { sub: adminId } = jwt.verify(token, JWT_SECRET);
-        const { nombreCompleto, direccion } = request.body;
+        const { sub: idSolicitante } = jwt.verify(token, JWT_SECRET);
+
+        const { userId: idObjetivo } = request.params;
+        const datosActualizados = request.body;
 
         logic
-          .editUserAdmin(adminId, userId, nombreCompleto, direccion)
-          .then((updatedUser) => response.status(200).json(updatedUser))
+          .editarUsuario(idSolicitante, idObjetivo, datosActualizados)
+          .then(() => response.status(200).json({ mensaje: 'Usuario actualizado correctamente' }))
           .catch((error) => next(error));
       } catch (error) {
         next(error);
       }
     });
-    server.put('/users', jsonBodyParser, (request, response, next) => {
-      try {
-        const { authorization } = request.headers;
-        if (!authorization || !authorization.startsWith('Bearer ')) {
-          const error = new Error('Encabezado de autorizacion invalido');
-          error.status = 401;
-          throw error;
-        }
-        const token = authorization.slice(7);
-        const { sub: userId } = jwt.verify(token, JWT_SECRET);
 
-        const { nombreCompleto, direccion } = request.body;
-        logic
-          .editUser(userId, nombreCompleto, direccion)
-          .then((updatedUser) => response.status(200).json(updatedUser))
-          .catch((error) => next(error));
-      } catch (error) {
-        next(error);
-      }
-    });
     server.use((error, request, response) => {
       if (error instanceof ValidationError)
         response.status(400).json({ error: error.constructor.name, message: error.message });

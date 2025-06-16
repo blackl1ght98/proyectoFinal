@@ -31,7 +31,7 @@ fetch('http://localhost:8080/users/auth', {
       });
   })
   .then(({ token, rol }) => {
-    console.log('User authenticated', { token, rol }); // Mostrar token y rol
-    return { token, rol }; // Opcional: devolver token y rol para uso posterior
+    console.log('User authenticated', { token, rol });
+    return { token, rol };
   })
   .catch((error) => console.error('Error:', error.message));
