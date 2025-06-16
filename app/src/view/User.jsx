@@ -1,6 +1,12 @@
 import { logic } from '../logic';
+import { useState } from 'react';
+import { EditUser } from './EditUser';
 
 export const User = ({ user, onUserDeleted }) => {
+  const [editUser, setEditUser] = useState(false);
+
+  const handleEditedUser = () => setEditUser(false);
+
   const handleDeleteClick = () => {
     if (confirm('¿Eliminar usuario?')) {
       try {
@@ -37,13 +43,19 @@ export const User = ({ user, onUserDeleted }) => {
       <p className="text-gray-700 mb-4">
         <span className="font-semibold">Fecha registro:</span> {new Date(user.fechaRegistro).toLocaleString()}
       </p>
-
+      <button
+        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition duration-200 mb-4"
+        onClick={() => setEditUser(true)}
+      >
+        Editar usuario
+      </button>
       <button
         onClick={handleDeleteClick}
         className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg transition duration-200"
       >
         Eliminar usuario
       </button>
+      {editUser && <EditUser user={user} onEditedUser={handleEditedUser} />}
     </div>
   );
 };

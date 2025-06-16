@@ -1,17 +1,19 @@
 import { logic } from '../logic';
-import { useNavigate } from 'react-router';
 import { useAuth } from '../context/AuthContext';
-export const Register = () => {
-  const navigate = useNavigate();
+import { useState } from 'react';
+//Usamos propiedades para traer datos estas propiedades vienen del componente User
+export const EditUser = ({ user, onEditedUser }) => {
+  //Usamos estados para pasar el valor actual del campo y poder cambiar el valor usando value
   const { loggedIn, rol: userRol } = useAuth();
+  const [nombreCompleto, setNombreCompleto] = useState(user.nombreCompleto);
+  const [email, setEmail] = useState(user.email);
+  const [direccion, setDireccion] = useState(user.direccion);
+  const [password, setPassword] = useState('');
+  const [rol, setRol] = useState(user.rol);
+  //Usamos el contexto que hemos creado para comprobar si el usuario esta logueado y es administrador
   const isAdmin = loggedIn && userRol === 'administrador';
 
-  const handleLoginClick = (event) => {
-    event.preventDefault();
-    navigate('/login');
-  };
-
-  const handleRegisterSubmit = (event) => {
+  const handleEditSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
     const nombreCompleto = form.name.value;
@@ -22,10 +24,10 @@ export const Register = () => {
 
     try {
       logic
-        .registerUser(nombreCompleto, email, password, direccion, rol)
+        .editUser(user.id, nombreCompleto, email, password, direccion, rol)
         .then(() => {
           form.reset();
-          navigate('/login');
+          onEditedUser();
         })
         .catch((error) => {
           console.error(error);
@@ -37,13 +39,17 @@ export const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div
+      className="w-screen h-screen flex items-center justify-center  bg-opacity-25
+ px-4 fixed inset-0  z-50"
+    >
+      {' '}
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
         <div className="flex justify-center mb-6 text-4xl text-blue-500">
-          <i className="fas fa-user-plus"></i> {/* Font Awesome icon optional */}
+          <i className="fas fa-user-plus"></i>
         </div>
         <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">Registro</h1>
-        <form className="space-y-4" onSubmit={handleRegisterSubmit}>
+        <form className="space-y-4" onSubmit={handleEditSubmit}>
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
               Nombre completo
@@ -52,6 +58,8 @@ export const Register = () => {
               type="text"
               name="name"
               id="name"
+              value={nombreCompleto}
+              onChange={(event) => setNombreCompleto(event.target.value)}
               placeholder="Tu nombre"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
@@ -65,6 +73,8 @@ export const Register = () => {
               type="email"
               name="email"
               id="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
               placeholder="Tu email"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
@@ -78,6 +88,8 @@ export const Register = () => {
               type="password"
               name="password"
               id="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               placeholder="Tu contraseña"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
@@ -91,6 +103,9 @@ export const Register = () => {
               type="text"
               name="direccion"
               id="direccion"
+              value={direccion}
+              onChange={(event) => setDireccion(event.target.value)}
+              contentEditable="true"
               placeholder="Tu dirección"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
@@ -110,6 +125,8 @@ export const Register = () => {
                 <select
                   name="rol"
                   id="rol"
+                  value={rol}
+                  onChange={(event) => setRol(event.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                   defaultValue="cliente"
                   required
@@ -125,16 +142,17 @@ export const Register = () => {
 
           <div className="flex justify-between gap-2 pt-2">
             <button
-              onClick={handleLoginClick}
-              className="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded-lg transition"
+              type="submit"
+              className="w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 rounded-lg transition"
             >
-              Login
+              Editar
             </button>
             <button
               type="submit"
               className="w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 rounded-lg transition"
+              onClick={() => onEditedUser()}
             >
-              Registrar
+              Cancelar edicion
             </button>
           </div>
         </form>
