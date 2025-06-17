@@ -1,4 +1,4 @@
-import express, { response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import { connect, User } from './data/index.js';
@@ -75,6 +75,39 @@ connect(MONGO_URL)
         logic
           .getUsers(userId)
           .then((user) => response.status(200).json(user))
+          .catch((error) => next(error));
+      } catch (error) {
+        next(error);
+      }
+    });
+
+    server.get('/users/:rol', (request, response, next) => {
+      try {
+        const { authorization } = request.headers;
+        const { rol } = request.params; // Obtener el rol desde los query parameters
+
+        // Validar que se proporcionó el rol
+        if (!rol) {
+          const error = new Error('El parámetro rol es requerido');
+          error.status = 400; // Bad Request
+          throw error;
+        }
+        console.log('Rol recibido:', rol);
+        // Validar el encabezado de autorización
+        if (!authorization || !authorization.startsWith('Bearer ')) {
+          const error = new Error('Encabezado de autorización inválido');
+          error.status = 401; // Unauthorized
+          throw error;
+        }
+
+        // Verificar el token JWT
+        const token = authorization.slice(7);
+        const { sub: userId } = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Llamar a getUsersByRol con el rol proporcionado
+        logic
+          .getUsersByRol(rol)
+          .then((users) => response.status(200).json(users))
           .catch((error) => next(error));
       } catch (error) {
         next(error);
