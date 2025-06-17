@@ -2,10 +2,13 @@ import { logic } from '../logic';
 import { useState } from 'react';
 import { EditUser } from './EditUser';
 
-export const User = ({ user, onUserDeleted }) => {
+export const User = ({ user, onUserDeleted, onReloadUser }) => {
   const [editUser, setEditUser] = useState(false);
 
-  const handleEditedUser = () => setEditUser(false);
+  const handleEditedUser = () => {
+    setEditUser(false);
+    onReloadUser();
+  };
 
   const handleDeleteClick = () => {
     if (confirm('¿Eliminar usuario?')) {

@@ -36,18 +36,40 @@ export const Navbar = () => {
       </div>
 
       <div className="flex gap-3">
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-          onClick={() => navigate('/register')}
-        >
-          Registrar
-        </button>
-        <button
-          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
-          onClick={() => navigate('/login')}
-        >
-          Login
-        </button>
+        {loggedIn ? (
+          <>
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+              onClick={() => navigate('/register')}
+              hidden
+            >
+              Registrar
+            </button>
+            <button
+              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
+              onClick={() => navigate('/login')}
+              hidden
+            >
+              Login
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+              onClick={() => navigate('/register')}
+            >
+              Registrar
+            </button>
+            <button
+              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
+              onClick={() => navigate('/login')}
+            >
+              Login
+            </button>
+          </>
+        )}
+
         <button
           className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
           onClick={handleLogoutClick}

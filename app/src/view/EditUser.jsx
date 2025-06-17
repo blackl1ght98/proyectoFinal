@@ -12,7 +12,7 @@ export const EditUser = ({ user, onEditedUser }) => {
   const [rol, setRol] = useState(user.rol);
   //Usamos el contexto que hemos creado para comprobar si el usuario esta logueado y es administrador
   const isAdmin = loggedIn && userRol === 'administrador';
-
+  const handleEditUser = () => onEditedUser();
   const handleEditSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
@@ -27,7 +27,7 @@ export const EditUser = ({ user, onEditedUser }) => {
         .editUser(user.id, nombreCompleto, email, password, direccion, rol)
         .then(() => {
           form.reset();
-          onEditedUser();
+          handleEditUser();
         })
         .catch((error) => {
           console.error(error);
@@ -150,7 +150,7 @@ export const EditUser = ({ user, onEditedUser }) => {
             <button
               type="submit"
               className="w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 rounded-lg transition"
-              onClick={() => onEditedUser()}
+              onClick={() => handleEditUser()}
             >
               Cancelar edicion
             </button>

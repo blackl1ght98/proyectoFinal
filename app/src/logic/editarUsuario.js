@@ -33,7 +33,7 @@ export const editUser = (idObjetivo, nombreCompleto, email, password, direccion,
     })
     .then((response) => {
       const { status } = response;
-      if (status === 201) return;
+      if (status === 200) return;
       return response
         .json()
         .catch(() => {
