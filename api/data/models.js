@@ -34,7 +34,27 @@ const user = new Schema({
     default: 'cliente',
   },
 });
-
+const proveedor = new Schema({
+  nombre: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  contacto: {
+    type: String,
+    required: true,
+  },
+  direccion: {
+    type: String,
+    required: true,
+  },
+  usuario: {
+    type: ObjectId,
+    ref: 'User',
+    required: true,
+  },
+});
 const User = model('User', user);
+const Proveedor = model('Proveedor', proveedor);
 
-export { User };
+export { User, Proveedor };

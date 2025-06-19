@@ -5,6 +5,9 @@ import { registerUser } from './registerUser.js';
 import { removeUser } from './removeUser.js';
 import { editarUsuario } from './editarUsuario.js';
 import { getUsersByRol } from './getUsersByRol.js';
+import { addProveedor } from './addProveedor.js';
+import { deleteProveedor } from './deleteProveedor.js';
+import { editarProveedor } from './editarProveedor.js';
 export const logic = {
   registerUser,
   authenticateUser,
@@ -12,4 +15,7 @@ export const logic = {
   getUsers,
   editarUsuario,
   getUsersByRol,
+  addProveedor,
+  deleteProveedor,
+  editarProveedor,
 };
