@@ -14,14 +14,16 @@ export const authenticateUser = (email, password) => {
     })
     .then((user) => {
       if (!user) throw new NotFoundError('user not found');
+
       return bcrypt
         .compare(password, user.password)
-        .then(() => {
-          console.log('El rol del usuario es ', user.rol);
-          return { id: user.id, rol: user.rol };
+        .catch((error) => {
+          throw new SystemError(error.message);
         })
-        .catch(() => {
-          throw new CredentialsError('credentials error');
+        .then((match) => {
+          if (!match) throw new CredentialsError('wrong password');
+
+          return { id: user.id, rol: user.rol };
         });
     });
 };

@@ -33,7 +33,7 @@ connect(MONGO_URL)
           .authenticateUser(email, password)
           .then(({ id, rol }) => {
             const token = jwt.sign({ sub: id, rol }, JWT_SECRET);
-            response.status(200).json({ token, rol });
+            response.status(200).json({ token });
           })
           .catch((error) => next(error));
       } catch (error) {
