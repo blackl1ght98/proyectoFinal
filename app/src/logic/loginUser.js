@@ -26,7 +26,7 @@ export const loginUser = (email, password) => {
           })
           .then(({ token, rol }) => {
             data.setToken(token);
-            // Opcional: almacenar el rol si es necesario
+
             data.setRol(rol);
             return { token, rol };
           });
